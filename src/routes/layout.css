@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
-button {
+button,
+.button {
 	@apply rounded bg-blue-950 px-3 py-1 text-slate-200 hover:bg-blue-800;
 }

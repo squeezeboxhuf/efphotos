@@ -18,7 +18,7 @@
 	let selectedYear = $derived(selections?.state.selectedYear ?? 0);
 </script>
 
-<div class="wrap flex max-w-screen flex-wrap items-center gap-1">
+<div class="wrap my-2 flex max-w-screen flex-wrap items-center gap-1 bg-orange-300 py-1">
 	<button
 		onclick={() => {
 			if (ascDesc.current === 'asc') {
@@ -38,7 +38,7 @@
 			onclick={() => {
 				selections.selectYear(year?.year ?? '0');
 				selections.selectMonth('0');
-				selections.selectDay(`${year.year}****`);
+				selections.selectDay(`D${year.year}****`);
 			}}
 		>
 			<span class="font-semibold">{year.year}</span><span class="text-xs">({year.photoCount})</span>

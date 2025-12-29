@@ -1,6 +1,6 @@
 // place files you want to import through the `$lib` alias in this folder.
 
-import { and, eq, gte, lt } from "drizzle-orm"
+import { and, eq, gte, like, lt, or } from "drizzle-orm"
 import { db } from "./server/db"
 import { photo, photoDates, yearMonths, years } from "./server/db/schema"
 
@@ -8,6 +8,7 @@ export async function getYearsData() {
 	const data = await db
 		.select()
 		.from(years)
+		.orderBy(years.year)
 	return data
 }
 
@@ -16,6 +17,7 @@ export async function getYearMonthsData(year: string) {
 		.select()
 		.from(yearMonths)
 		.where(eq(yearMonths.year, year))
+		.orderBy(yearMonths.yearMonth)
 	return data
 }
 
@@ -24,6 +26,7 @@ export async function getDaysData(yearMonth: string) {
 		.select()
 		.from(photoDates)
 		.where(and(eq(photoDates.year, yearMonth.slice(0, 4)), eq(photoDates.month, yearMonth.slice(4, 6))))
+		.orderBy(photoDates.photoDate)
 	return data
 }
 
@@ -38,6 +41,7 @@ export async function getPhotosData(yearMonthDay: string) {
 				.select()
 				.from(photo)
 				.where(and(gte(photo.thisDate, dtstart), lt(photo.thisDate, dtend)))
+				.orderBy(photo.thisDate, photo.photo)
 				.limit(20)
 
 		case yearMonthDay.slice(6, 8) === "**":
@@ -48,6 +52,7 @@ export async function getPhotosData(yearMonthDay: string) {
 				.select()
 				.from(photo)
 				.where(and(gte(photo.thisDate, dtstart), lt(photo.thisDate, dtend)))
+				.orderBy(photo.thisDate, photo.photo)
 				.limit(20)
 
 		default:
@@ -55,5 +60,23 @@ export async function getPhotosData(yearMonthDay: string) {
 				.select()
 				.from(photo)
 				.where(eq(photo.thisDate, Number(yearMonthDay)))
+				.orderBy(photo.thisDate, photo.photo)
 	}
+}
+
+export async function getPhotoData(id: number) {
+	return await db
+		.select()
+		.from(photo)
+		.where(eq(photo.rowid, id))
+}
+
+export async function findPhotos(search: string) {
+	// console.log("search", search)
+	return await db
+		.select()
+		.from(photo)
+		// .where(like(photo.title, `%${search}%`))
+		.where(or(like(photo.title, `%${search}%`), like(photo.datesNarrative, `%${search}%`), like(photo.photosKeywords, `%${search}%`)))
+		.orderBy(photo.thisDate, photo.photo)
 }

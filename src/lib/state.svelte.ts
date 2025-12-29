@@ -2,11 +2,11 @@ import { getContext, setContext } from 'svelte';
 
 
 export type Selection = {
-    selectedYear: string, selectedMonth: string, selectedDay: string
+    selectedYear: string, selectedMonth: string, selectedDay: string, rowId: number
 }
 
 export class Selections {
-    state = $state<Selection>({ selectedYear: "0", selectedMonth: "0", selectedDay: "0" })
+    state = $state<Selection>({ selectedYear: "0", selectedMonth: "0", selectedDay: "0", rowId: 99999 })
     selectYear(year: string) {
         this.state.selectedYear = year
     }
@@ -15,6 +15,9 @@ export class Selections {
     }
     selectDay(day: string) {
         this.state.selectedDay = day
+    }
+    selectId(id: number) {
+        this.state.rowId = id
     }
 }
 
