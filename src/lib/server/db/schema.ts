@@ -32,6 +32,11 @@ export const yearMonths = sqliteTable('photoyearmonths', {
   month: text('month'),
 });
 
+export const diary = sqliteTable('diary', {
+  entryDate: text('entryDate'),
+  content: text('content'),
+});
+
 export type Photo = typeof photo.$inferSelect
 export type PhotoDate = typeof photoDates.$inferSelect
 export type Year = typeof years.$inferSelect
