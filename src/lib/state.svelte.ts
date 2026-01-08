@@ -1,24 +1,39 @@
+// import { getPhotosIds } from '$lib';
 import { getContext, setContext } from 'svelte';
 
 
 export type Selection = {
-    selectedYear: string, selectedMonth: string, selectedDay: string, rowId: number
+    selectedYear: string, selectedMonth: string, selectedDay: string, rowId: number, idTable: number[]
 }
 
 export class Selections {
-    state = $state<Selection>({ selectedYear: "0", selectedMonth: "0", selectedDay: "0", rowId: 99999 })
+    state = $state<Selection>({ selectedYear: "0000", selectedMonth: "00", selectedDay: "00", rowId: 99999, idTable: [] })
     selectYear(year: string) {
         this.state.selectedYear = year
+        this.state.selectedMonth = "00"
+        this.state.selectedDay = `D${year}****`
+        // getPhotosIds(`${year}****`).then((idList) => {
+        //     this.state.idTable = [...idList.map(p => p.rowid ?? 0)]
+        // })
+
     }
     selectMonth(month: string) {
         this.state.selectedMonth = month
+        this.state.selectedDay = `D${this.state.selectedYear}${month}**`
+        // getPhotosIds(`${this.state.selectedYear}${month}**`).then((idList) => {
+        //     this.state.idTable = [...idList.map(p => p.rowid ?? 0)]
+        // })
     }
     selectDay(day: string) {
         this.state.selectedDay = day
+        // getPhotosIds(`${this.state.selectedYear}${this.state.selectedMonth}${day}`).then((idList) => {
+        //     this.state.idTable = [...idList.map(p => p.rowid ?? 0)]
+        // })
     }
     selectId(id: number) {
         this.state.rowId = id
     }
+    setIdTable(res: number[]) { this.state.idTable = [...res] }
 }
 
 const CURRENT_SELECTION_KEY = Symbol('YEAR')
@@ -31,6 +46,10 @@ export function getSelections() {
     return getContext<ReturnType<typeof setSelectionState>>(CURRENT_SELECTION_KEY)
 }
 
+// export const setIdTable = (res: number[]) => {
+//     const selections = getSelections()
+//     selections.setIdTable(res)
+// }
 // export type Year = {
 //     year: number | null, photoCount: number | null
 // }

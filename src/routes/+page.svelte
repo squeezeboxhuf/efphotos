@@ -8,70 +8,112 @@
 	import { PersistedState } from 'runed';
 
 	let selections = getSelections();
-	let currentId = new PersistedState('currentId', selections.state.rowId);
+	let currentEnd = $state(20);
+	let currentSelection = new PersistedState('currentSelection', selections.state);
 
-	let photoData = $derived(await getPhotos(`${String(selections.state.selectedDay)}`));
+	const months = [
+		'Select A Year',
+		'Jan',
+		'Feb',
+		'Mar',
+		'Apr',
+		'May',
+		'Jun',
+		'Jul',
+		'Aug',
+		'Sep',
+		'Oct',
+		'Nov',
+		'Dec'
+	];
+	let photoData = $derived(
+		await getPhotos(`${String(selections.state.selectedDay ?? '********')}`)
+	);
+	// let photoIdsData = $derived(
+	// 	await getPhotosIds(`${String(selections.state.selectedDay ?? '********')}`)
+	// );
 
+	// $effect(() => {
+	// 	getPhotos(`${String(selections.state.selectedDay)}`).refresh();
+	// });
 	$effect(() => {
-		getPhotos(`${String(selections.state.selectedDay)}`).refresh();
+		selections.setIdTable(photoData.map((p) => p?.rowid ?? 0));
+		currentEnd = 20;
+		// currentSelection.current = selections.state;
 	});
-	$inspect('selection', selections.state, photoData);
+	$inspect('index page', selections.state);
 </script>
 
-<Yearsrow />
-<Monthsrow />
-<Daysrow />
+<article class="mx-auto">
+	<Yearsrow />
+	<Monthsrow />
+	<Daysrow />
 
-<Searchrow />
-<article class="mx-auto max-w-2xl px-4 py-2">
-	<h1>Photos ({selections.state.selectedDay}) ({photoData.photoData.length} photos)</h1>
+	<Searchrow />
+	<div class="p-2">
+		<h1 class="h1 my-4 text-2xl font-semibold">
+			{#if selections.state.selectedDay.slice(0, 1) === 'S'}
+				Search Results ({selections.state.selectedDay.slice(1)}) ({photoData.length} photos)
+			{:else}
+				Photos for {#if selections.state.selectedDay.slice(-2) !== '**'}
+					{Number(selections.state.selectedDay.slice(-2))}
+				{/if}
+				{#if selections.state.selectedMonth !== '00'}
+					{months[Number(selections.state.selectedMonth)]}{/if}
+			{/if}
+			{selections.state.selectedDay.slice(1, 5)} ({photoData.length} photos)
+		</h1>
 
-	{#if selections.state.selectedDay !== '0'}
-		<div class="grid grid-cols-5 gap-2 leading-5">
-			{#each photoData.photoData as photo}
-				<a
-					class="decoration-0"
-					onclick={() => {
-						selections.selectId(photo?.rowid ?? 99999);
-						currentId.current = photo.rowid ?? 99999;
-					}}
-					href="/photo"
-				>
-					<p>{photo.title}</p>
-					<p>
-						<img
-							src={`/jpegs/${String(photo.thisDate).slice(0, 4)}/${String(photo.thisDate).slice(4, 6)}/${String(photo.thisDate).slice(-2)}/${photo.photo}`}
-							alt={photo.title}
-							class="h-32 w-32 object-cover"
-						/>
-					</p>
-					<p>{photo.photosNarrative}</p>
-				</a>
-			{/each}
-		</div>
-	{/if}
-	<!-- <h2>Years to pick from...</h2>
-	<p>
-		<button
-			type="button"
-			onclick={() => {
-				if (sort === 'ascending') {
-					yearList = [...yearList.toSorted((b, a) => Number(a.year) - Number(b.year))];
-					sort = 'descending';
-				} else {
-					yearList = [...yearList.toSorted((a, b) => Number(a.year) - Number(b.year))];
-					sort = 'ascending';
-				}
-			}}>Sort years {sort}</button
-		>
-	</p>
-
-	<ul>
-		{#each yearList as y}
-			<li class="flex flex-row items-center gap-2">
-				<a href={`year-${y.year}`} class="cursor-pointer">{y.year}</a>
-				<span>{y.photoCount} photo{(y?.photoCount ?? 0 > 1) ? 's' : ''}</span>
-			</li>
-		{/each}
-	</ul> -->
+		{#if selections.state.selectedDay !== '0'}
+			<div class="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-2 leading-5">
+				{#each photoData.slice(0, currentEnd) as photo, inx}
+					<div class=" max-w-32 overflow-hidden">
+						<a
+							class="decoration-0"
+							onclick={() => {
+								selections.selectId(inx);
+								// currentSelection.current =
+								// 	selections.state.selectedDay.slice(0, 1) === 'S' ? inx : (photo?.rowid ?? 99999);
+								// currentSelection.current = { ...selections.state };
+							}}
+							href="/photo"
+							data-sveltekit-preload-data="tap"
+						>
+							<p class="h-12 overflow-hidden text-ellipsis">{photo.title}</p>
+							<p>
+								<img
+									src={`/jpegs/${String(photo.thisDate).slice(0, 4)}/${String(photo.thisDate).slice(4, 6)}/${String(photo.thisDate).slice(-2)}/${photo.photo}`}
+									alt={photo.title}
+									class="h-32 w-32 rounded object-cover"
+								/>
+							</p>
+							<p>{photo.photosNarrative}</p>
+						</a>
+					</div>
+				{/each}
+				<div class="flex flex-col gap-2 self-center">
+					{#if photoData.length > currentEnd}
+						<button
+							class="bg-sky-700! hover:bg-sky-600!"
+							onclick={() => {
+								currentEnd += currentEnd + 20 < photoData.length ? 20 : photoData.length;
+							}}
+							>Load another 20...
+							<hr class="my-2" />
+							(there's still another {photoData.length - currentEnd} photos)</button
+						>
+					{/if}
+					{#if photoData.length > currentEnd + 50}
+						<button
+							class="my-2 bg-sky-700! py-4! hover:bg-sky-600!"
+							onclick={() => {
+								currentEnd += currentEnd + 50 < photoData.length ? 50 : photoData.length;
+							}}
+							>Load another 50...
+						</button>
+					{/if}
+				</div>
+			</div>
+		{/if}
+	</div>
 </article>

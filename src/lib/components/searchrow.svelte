@@ -8,7 +8,7 @@
 	let searchField: HTMLInputElement | undefined = $state();
 </script>
 
-<p class="my-2 bg-orange-300 py-2">
+<p class=" bg-sky-500/70 px-2 py-2 text-slate-900">
 	<label class="flex items-center"
 		>Search:<input
 			name="search"

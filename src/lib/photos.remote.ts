@@ -3,67 +3,58 @@ import { command, query } from "$app/server"
 import { findPhotos, getDaysData, getPhotoData, getPhotosData, getYearMonthsData, getYearsData } from "$lib";
 
 export const getYears = query(async () => {
+	console.log("getYears")
 	const yearsData = await getYearsData()
 	return { yearsData }
 })
 
 export const getYearMonths = query(v.string(), async (year) => {
+	console.log("getMonths", year)
 	if (year === "0") {
 		return {
-			monthsData: [{
-				yearMonth: '',
-				photoCount: 0,
-				year: "0",
-				month: "0"
-			}]
+			monthsData: []
 		}
 	}
 	const monthsData = await getYearMonthsData(year)
 	return { monthsData }
 })
 export const getYearMonthDays = query(v.string(), async (yearmonth) => {
+	console.log("getMonthsDays", yearmonth)
 	if (yearmonth === "0") {
 		return {
-			dayData: [{
-				photoDate: "0",
-				yearMonth: '',
-				photoCount: 0,
-				year: "0",
-				month: "0"
-			}]
+			dayData: []
 		}
 	}
 	const dayData = await getDaysData(yearmonth)
 	return { dayData }
 })
 export const getPhotos = query(v.string(), async (searchParam) => {
+	console.log("getPhotos", searchParam)
 	// console.log("get", searchParam)
 	if (searchParam.slice(0, 1) === "S") {
 		if (searchParam.slice(1).trim() !== '') {
 			// console.log("get search", searchParam.slice(1))
 			const photoData = await findPhotos(searchParam.slice(1))
-			return { photoData }
+			return photoData
 		}
 		else {
-			return {
-				photoData: [{
-					rowid: 999999,
-					thisDate: "",
-					title: '',
-					photosNarrative: '',
-					photosKeyword: '',
-					photo: '',
-					credits: '',
-					datesNarrative: "",
-					datesKeywords: ''
-				}]
-			}
+			return [{
+				rowid: 999999,
+				thisDate: "",
+				title: '',
+				photosNarrative: '',
+				photosKeyword: '',
+				photo: '',
+				credits: '',
+				datesNarrative: "",
+				datesKeywords: ''
+			}]
 		}
 	}
 	else {
 		// console.log("get date", searchParam.slice(1))
 		const photoData = await getPhotosData(searchParam.slice(1))
-		return { photoData }
+		return photoData
 	}
 
 
@@ -85,23 +76,24 @@ export const getPhotos = query(v.string(), async (searchParam) => {
 })
 
 export const getPhoto = query(v.number(), async (id) => {
+	console.log("getPhoto", id)
 	if (id === 99999) {
 		return {
 			photo:
-				[{
-					rowid: 999999,
-					thisDate: "",
-					title: '',
-					photosNarrative: '',
-					photosKeyword: '',
-					photo: '',
-					credits: '',
-					datesNarrative: "",
-					datesKeywords: ''
-				}]
+			{
+				rowid: 999999,
+				thisDate: "",
+				title: '',
+				photosNarrative: '',
+				photosKeyword: '',
+				photo: '',
+				credits: '',
+				datesNarrative: "",
+				datesKeywords: ''
+			}
 		}
 	}
-	const data = await getPhotoData(id)
+	const [data] = await getPhotoData(id)
 	return { photo: data }
 })
 

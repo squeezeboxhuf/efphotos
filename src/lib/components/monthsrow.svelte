@@ -6,7 +6,7 @@
 	let monthsData = $derived(await getYearMonths(String(selections?.state?.selectedYear ?? 0)));
 
 	const months = [
-		'Oops',
+		'Select A Year',
 		'Jan',
 		'Feb',
 		'Mar',
@@ -26,18 +26,22 @@
 	});
 </script>
 
-<div class="my-2 flex flex-row items-center gap-1 bg-orange-100 py-1">
-	{#each monthsData.monthsData as mon, inx}
-		<button
-			class={`flex flex-col items-center justify-center gap-0 rounded border px-2 py-2 leading-2 ${selectedMonth === mon.month ? 'bg-red-800!' : 'bg-red-300'}`}
-			onclick={() => {
-				selections.selectMonth(mon?.month ?? '0');
-				selections.selectDay(`D${selections.state.selectedYear}${mon.month}**`);
-			}}
-		>
-			<span class="font-semibold">{months[Number(mon.month)]}</span><span class="text-xs"
-				>({mon.photoCount})</span
+{#if monthsData.monthsData.length > 0}
+	<div
+		class=" grid grid-cols-[repeat(auto-fill,minmax(50px,1fr))] items-center gap-1 bg-sky-700 px-2 py-1"
+	>
+		{#each monthsData.monthsData as mon, inx}
+			<button
+				class={`flex flex-col items-center justify-center gap-0 rounded border px-2 py-2 leading-2 ${selectedMonth === mon.month ? 'bg-red-800!' : 'bg-red-300'}`}
+				onclick={() => {
+					selections.selectMonth(mon?.month ?? '0');
+					// selections.selectDay(`D${selections.state.selectedYear}${mon.month}**`);
+				}}
 			>
-		</button>
-	{/each}
-</div>
+				<span class="font-semibold">{months[Number(mon.month)]}</span><span class="text-xs"
+					>({mon.photoCount})</span
+				>
+			</button>
+		{/each}
+	</div>
+{/if}

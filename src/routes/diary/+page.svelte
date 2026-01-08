@@ -37,10 +37,11 @@
 	}
 </script>
 
-<article class="mx-auto prose max-w-4xl">
-	<p class="mb-2 flex items-center gap-2 bg-orange-400 p-2">
-		<label for="year">Pick a year:</label><select
-			class="rounded border bg-white p-2"
+<article class="mx-auto text-slate-300">
+	<p class="mb-2 flex flex-wrap items-center gap-2 bg-sky-800 p-2">
+		<label for="year">Pick a year:</label>
+		<select
+			class="rounded border bg-white p-2 text-slate-900"
 			name="year"
 			bind:this={yearPicker}
 			onchange={async () => {
@@ -57,24 +58,29 @@
 			>or Search:<input
 				name="search"
 				bind:this={searchField}
-				class="mx-2 rounded border bg-white px-2 py-1"
+				class="mx-2 rounded border bg-white px-2 py-1 text-slate-800"
 			/>
 		</label><button
 			type="submit"
 			onclick={async () => {
-				// search(searchField?.value ?? '00000000');
 				data = await diarySearch(searchField?.value ?? '');
+				headerTitle = `Search results ${searchField?.value} : found ${data.length} entries`;
 			}}><Search /></button
 		>
+		<button
+			class="ml-auto bg-pink-800! hover:bg-pink-700!"
+			onclick={() => window.location.assign('/')}>Photos</button
+		>
 	</p>
-	<h2>{headerTitle}</h2>
-	<div class="mb-10">
+	<h2 class="px-2 text-3xl font-semibold text-slate-300">{headerTitle}</h2>
+	<div class="mb-10 px-2">
 		{#each data as day}
-			<p class="text-xl font-semibold">{day.entryDate}</p>
+			<p class="text-xl font-semibold">
+				{new Date(day.entryDate ?? '').toUTCString().slice(0, 16)}
+			</p>
 			<p class="mb-2 border-b">{@html day.content}</p>
 		{/each}
 	</div>
-	<!-- <div bind:this={targetNode}>Bottom!</div> -->
 	<button
 		class="rounded"
 		onclick={() => {

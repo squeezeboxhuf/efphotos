@@ -35,32 +35,79 @@ export async function getPhotosData(yearMonthDay: string) {
 	switch (true) {
 		case yearMonthDay.slice(4, 6) === "**":
 			//single year filter
-			dtstart = Number(yearMonthDay.replaceAll("*", "0"))
-			dtend = Number(`${Number(yearMonthDay.slice(0, 4)) + 1}0000`)
-			return await db
-				.select()
-				.from(photo)
-				.where(and(gte(photo.thisDate, dtstart), lt(photo.thisDate, dtend)))
-				.orderBy(photo.thisDate, photo.photo)
-				.limit(20)
-
+			{
+				dtstart = Number(yearMonthDay.replaceAll("*", "0"))
+				dtend = Number(`${Number(yearMonthDay.slice(0, 4)) + 1}0000`)
+				// const count = await db.select({ totalPhotos: sql`COUNT(*)` }).from(photo).where(and(gte(photo.thisDate, dtstart), lt(photo.thisDate, dtend)))
+				const res = await db
+					.select()
+					.from(photo)
+					.where(and(gte(photo.thisDate, dtstart), lt(photo.thisDate, dtend)))
+					.orderBy(photo.thisDate, photo.photo)
+				return res;
+			}
 		case yearMonthDay.slice(6, 8) === "**":
 			//year and month filter
-			dtstart = Number(yearMonthDay.replaceAll("*", "0"))
-			dtend = Number(`${Number(yearMonthDay.slice(0, 6)) + 1}00`)
-			return await db
-				.select()
-				.from(photo)
-				.where(and(gte(photo.thisDate, dtstart), lt(photo.thisDate, dtend)))
-				.orderBy(photo.thisDate, photo.photo)
-				.limit(20)
-
+			{
+				dtstart = Number(yearMonthDay.replaceAll("*", "0"))
+				dtend = Number(`${Number(yearMonthDay.slice(0, 6)) + 1}00`)
+				// const count = await db.select({ totalPhotos: sql`COUNT(*)` }).from(photo).where(and(gte(photo.thisDate, dtstart), lt(photo.thisDate, dtend)))
+				const res = await db
+					.select()
+					.from(photo)
+					.where(and(gte(photo.thisDate, dtstart), lt(photo.thisDate, dtend)))
+					.orderBy(photo.thisDate, photo.photo)
+				return res
+			}
 		default:
-			return await db
-				.select()
-				.from(photo)
-				.where(eq(photo.thisDate, Number(yearMonthDay)))
-				.orderBy(photo.thisDate, photo.photo)
+			{
+				const res = await db
+					.select()
+					.from(photo)
+					.where(eq(photo.thisDate, Number(yearMonthDay)))
+					.orderBy(photo.thisDate, photo.photo)
+				return res
+			}
+	}
+}
+export async function getPhotosIds(yearMonthDay: string) {
+	let dtstart: number, dtend: number
+	switch (true) {
+		case yearMonthDay.slice(4, 6) === "**":
+			//single year filter
+			{
+				dtstart = Number(yearMonthDay.replaceAll("*", "0"))
+				dtend = Number(`${Number(yearMonthDay.slice(0, 4)) + 1}0000`)
+				const res = await db
+					.select({ rowid: photo.rowid })
+					.from(photo)
+					.where(and(gte(photo.thisDate, dtstart), lt(photo.thisDate, dtend)))
+					.orderBy(photo.thisDate, photo.photo)
+					.limit(20)
+				return res;
+			}
+		case yearMonthDay.slice(6, 8) === "**":
+			//year and month filter
+			{
+				dtstart = Number(yearMonthDay.replaceAll("*", "0"))
+				dtend = Number(`${Number(yearMonthDay.slice(0, 6)) + 1}00`)
+				const res = await db
+					.select({ rowid: photo.rowid })
+					.from(photo)
+					.where(and(gte(photo.thisDate, dtstart), lt(photo.thisDate, dtend)))
+					.orderBy(photo.thisDate, photo.photo)
+					.limit(20)
+				return res
+			}
+		default:
+			{
+				const res = await db
+					.select({ rowid: photo.rowid })
+					.from(photo)
+					.where(eq(photo.thisDate, Number(yearMonthDay)))
+					.orderBy(photo.thisDate, photo.photo)
+				return res
+			}
 	}
 }
 
@@ -73,10 +120,11 @@ export async function getPhotoData(id: number) {
 
 export async function findPhotos(search: string) {
 	// console.log("search", search)
-	return await db
+	const res = await db
 		.select()
 		.from(photo)
 		// .where(like(photo.title, `%${search}%`))
-		.where(or(like(photo.title, `%${search}%`), like(photo.datesNarrative, `%${search}%`), like(photo.photosKeywords, `%${search}%`)))
+		.where(or(like(photo.title, `%${search}%`), like(photo.photosNarrative, `%${search}%`), like(photo.datesNarrative, `%${search}%`), like(photo.photosKeywords, `%${search}%`)))
 		.orderBy(photo.thisDate, photo.photo)
+	return res
 }
