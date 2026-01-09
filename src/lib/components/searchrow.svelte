@@ -17,7 +17,7 @@
 	}}
 />
 
-<p class=" bg-sky-500/70 px-2 py-2 text-slate-900">
+<p class="w-full bg-sky-500/70 px-0 py-2 text-slate-900 sm:px-2 lg:px-4">
 	<label class="flex items-center"
 		>Search:<input
 			name="search"

@@ -26,55 +26,57 @@
 		}
 	}}
 />
-<article class="mx-auto text-slate-300">
-	<p class="mb-2 flex flex-wrap items-center gap-2 bg-sky-800 p-2">
-		<label for="year">Pick a year:</label>
-		<select
-			class="rounded border bg-white p-2 text-slate-900"
-			name="year"
-			bind:this={yearPicker}
-			onchange={async () => {
-				data = await getDiaryYear(yearPicker?.value ?? '1965');
-				headerTitle = `Year selected ${yearPicker?.value} : found ${data.length} entries`;
-			}}
-		>
-			{#each yearsList as year}
-				<option value={year.year}>{year.year}</option>
-			{/each}
-		</select>
+<article class="mx-auto w-full px-0 text-slate-300">
+	<div class="">
+		<p class="mb-2 flex flex-wrap items-center gap-2 bg-sky-800 px-0 py-2 sm:px-2 lg:px-4">
+			<label for="year">Pick a year:</label>
+			<select
+				class="rounded border bg-white p-2 text-slate-900"
+				name="year"
+				bind:this={yearPicker}
+				onchange={async () => {
+					data = await getDiaryYear(yearPicker?.value ?? '1965');
+					headerTitle = `Year selected ${yearPicker?.value} : found ${data.length} entries`;
+				}}
+			>
+				{#each yearsList as year}
+					<option value={year.year}>{year.year}</option>
+				{/each}
+			</select>
 
-		<label class="flex items-center"
-			>or Search:<input
-				name="search"
-				bind:this={searchField}
-				class="mx-2 rounded border bg-white px-2 py-1 text-slate-800"
-			/>
-		</label><button
-			bind:this={searchButton}
-			type="submit"
-			onclick={async () => {
-				data = await diarySearch(searchField?.value ?? '');
-				headerTitle = `Search results ${searchField?.value} : found ${data.length} entries`;
-			}}><Search /></button
-		>
+			<label class="flex items-center"
+				>or Search:<input
+					name="search"
+					bind:this={searchField}
+					class="mx-2 rounded border bg-white px-2 py-1 text-slate-800"
+				/>
+			</label><button
+				bind:this={searchButton}
+				type="submit"
+				onclick={async () => {
+					data = await diarySearch(searchField?.value ?? '');
+					headerTitle = `Search results ${searchField?.value} : found ${data.length} entries`;
+				}}><Search /></button
+			>
+			<button
+				class="ml-auto bg-pink-800! hover:bg-pink-700!"
+				onclick={() => window.location.assign('/')}>Photos</button
+			>
+		</p>
+		<h2 class="px-2 text-3xl font-semibold text-slate-300 sm:px-4 lg:px-6">{headerTitle}</h2>
+		<div class="mt-2 mb-10 px-2 sm:px-4 lg:px-6">
+			{#each data as day}
+				<p class="text-xl font-semibold">
+					{new Date(day.entryDate ?? '').toUTCString().slice(0, 16)}
+				</p>
+				<p class="mb-2 border-b">{@html day.content}</p>
+			{/each}
+		</div>
 		<button
-			class="ml-auto bg-pink-800! hover:bg-pink-700!"
-			onclick={() => window.location.assign('/')}>Photos</button
+			class="rounded"
+			onclick={() => {
+				getMore(progress++);
+			}}>More...</button
 		>
-	</p>
-	<h2 class="px-2 text-3xl font-semibold text-slate-300">{headerTitle}</h2>
-	<div class="mb-10 px-2">
-		{#each data as day}
-			<p class="text-xl font-semibold">
-				{new Date(day.entryDate ?? '').toUTCString().slice(0, 16)}
-			</p>
-			<p class="mb-2 border-b">{@html day.content}</p>
-		{/each}
 	</div>
-	<button
-		class="rounded"
-		onclick={() => {
-			getMore(progress++);
-		}}>More...</button
-	>
 </article>

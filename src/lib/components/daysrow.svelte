@@ -14,7 +14,7 @@
 
 {#if daysData.dayData.length > 0}
 	<div
-		class="grid grid-cols-[repeat(auto-fill,minmax(40px,1fr))] items-center gap-1 bg-sky-600 px-2 py-1"
+		class="grid w-full grid-cols-[repeat(auto-fill,minmax(40px,1fr))] items-center gap-1 bg-sky-600 px-0 py-1 sm:px-2 lg:px-4"
 	>
 		{#each daysData.dayData as day, inx}
 			{@const thisdate = String(day.photoDate)}

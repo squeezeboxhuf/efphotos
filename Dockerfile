@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 RUN mkdir -p /app
 WORKDIR /app
 COPY package*.json /app
@@ -17,6 +17,8 @@ WORKDIR /app
 COPY --from=builder --chown=nodeuser:nodeuser /app/build build/
 COPY --from=builder --chown=nodeuser:nodeuser /app/node_modules node_modules/
 COPY package*.json .
+
+ENV DATABSE_URL='/app/localDB/photos.db'
 
 EXPOSE 3000
 CMD [ "node", "build" ]

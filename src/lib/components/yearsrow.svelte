@@ -18,7 +18,9 @@
 	let yearPicker: HTMLSelectElement | undefined = $state();
 </script>
 
-<div class="wrap flex flex-wrap items-center gap-1 bg-sky-800 px-2 py-1 text-slate-100">
+<div
+	class="wrap flex w-full flex-wrap items-center gap-1 bg-sky-800 px-0 py-1 text-slate-100 sm:px-2 lg:px-4"
+>
 	<label for="year">Pick a year:</label>
 	<select
 		class="tex-slate-900 rounded border bg-white px-2 py-2 text-slate-600"

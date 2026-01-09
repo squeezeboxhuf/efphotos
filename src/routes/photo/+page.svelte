@@ -35,30 +35,28 @@
 	});
 </script>
 
-<article class="mx-0 flex w-full flex-col items-center sm:mx-2 lg:mx-4">
-	{#if photo?.rowid !== 99999}
-		<div class="flex w-full max-w-2xl flex-row justify-between">
-			<button onclick={previous}>Previous</button>
-			<a href="/" class="button no-underline">Back</a>
-			<button onclick={next}>Next</button>
-		</div>
-		<h1>{photoDate.toString().slice(0, 15)} : {photo.title}</h1>
-		<p class="relative">
-			<input type="checkbox" id="zoomer" class="hidden" />
-			<label for="zoomer">
-				<img
-					src={`http://mooserve:8037/${String(photo.thisDate).slice(0, 4)}/${String(photo.thisDate).slice(4, 6)}/${String(photo.thisDate).slice(-2)}/${photo.photo}`}
-					alt={photo.title}
-					class="photo relative max-h-screen max-w-screen cursor-zoom-in overflow-scroll scroll-auto rounded object-contain transition-all duration-300"
-				/>
-			</label>
-		</p>
-		<p>{photo.photosNarrative}</p>
-		<p>Keywords : {photo.photosKeywords} {photo.datesKeywords}</p>
-	{:else}
-		<p>A big whoopsie...</p>
-	{/if}
-</article>
+{#if photo?.rowid !== 99999}
+	<div class="flex w-full max-w-2xl flex-row justify-between">
+		<button onclick={previous}>Previous</button>
+		<a href="/" class="button no-underline">Back</a>
+		<button onclick={next}>Next</button>
+	</div>
+	<h1>{photoDate.toString().slice(0, 15)} : {photo.title}</h1>
+	<p class="relative">
+		<input type="checkbox" id="zoomer" class="hidden" />
+		<label for="zoomer">
+			<img
+				src={`http://mooserve:8037/${String(photo.thisDate).slice(0, 4)}/${String(photo.thisDate).slice(4, 6)}/${String(photo.thisDate).slice(-2)}/${photo.photo}`}
+				alt={photo.title}
+				class="photo relative max-h-screen max-w-screen cursor-zoom-in overflow-scroll scroll-auto rounded object-contain transition-all duration-300"
+			/>
+		</label>
+	</p>
+	<p>{photo.photosNarrative}</p>
+	<p>Keywords : {photo.photosKeywords} {photo.datesKeywords}</p>
+{:else}
+	<p>A big whoopsie...</p>
+{/if}
 
 <style>
 	input[type='checkbox']:checked ~ label > img {

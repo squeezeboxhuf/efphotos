@@ -28,7 +28,7 @@
 
 {#if monthsData.monthsData.length > 0}
 	<div
-		class=" grid grid-cols-[repeat(auto-fill,minmax(50px,1fr))] items-center gap-1 bg-sky-700 px-2 py-1"
+		class="grid w-full grid-cols-[repeat(auto-fill,minmax(50px,1fr))] items-center gap-1 bg-sky-700 px-0 py-1 sm:px-2 lg:px-4"
 	>
 		{#each monthsData.monthsData as mon, inx}
 			<button
