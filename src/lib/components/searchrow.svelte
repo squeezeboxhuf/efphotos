@@ -6,7 +6,16 @@
 	let selections = getSelections();
 
 	let searchField: HTMLInputElement | undefined = $state();
+	let searchButton: HTMLButtonElement | undefined = $state();
 </script>
+
+<svelte:window
+	on:keyup={(event) => {
+		if (event.key === 'Enter') {
+			searchButton?.click();
+		}
+	}}
+/>
 
 <p class=" bg-sky-500/70 px-2 py-2 text-slate-900">
 	<label class="flex items-center"
@@ -16,6 +25,7 @@
 			class="mx-2 rounded border bg-white px-2 py-1"
 		/>
 		<button
+			bind:this={searchButton}
 			type="submit"
 			onclick={() => {
 				// search(searchField?.value ?? '00000000');

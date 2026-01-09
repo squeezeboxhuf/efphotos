@@ -2,7 +2,6 @@ import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 export const photo = sqliteTable('photos', {
   rowid: integer('rowid'),
-  // id: integer('id'),
   thisDate: integer('ThisDate'),
   title: text('Title'),
   photosNarrative: text('Photos_Narrative'),

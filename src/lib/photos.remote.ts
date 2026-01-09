@@ -18,6 +18,7 @@ export const getYearMonths = query(v.string(), async (year) => {
 	const monthsData = await getYearMonthsData(year)
 	return { monthsData }
 })
+
 export const getYearMonthDays = query(v.string(), async (yearmonth) => {
 	console.log("getMonthsDays", yearmonth)
 	if (yearmonth === "0") {
@@ -28,12 +29,11 @@ export const getYearMonthDays = query(v.string(), async (yearmonth) => {
 	const dayData = await getDaysData(yearmonth)
 	return { dayData }
 })
+
 export const getPhotos = query(v.string(), async (searchParam) => {
 	console.log("getPhotos", searchParam)
-	// console.log("get", searchParam)
 	if (searchParam.slice(0, 1) === "S") {
 		if (searchParam.slice(1).trim() !== '') {
-			// console.log("get search", searchParam.slice(1))
 			const photoData = await findPhotos(searchParam.slice(1))
 			return photoData
 		}
@@ -43,7 +43,7 @@ export const getPhotos = query(v.string(), async (searchParam) => {
 				thisDate: "",
 				title: '',
 				photosNarrative: '',
-				photosKeyword: '',
+				photosKeywords: '',
 				photo: '',
 				credits: '',
 				datesNarrative: "",
@@ -52,27 +52,9 @@ export const getPhotos = query(v.string(), async (searchParam) => {
 		}
 	}
 	else {
-		// console.log("get date", searchParam.slice(1))
 		const photoData = await getPhotosData(searchParam.slice(1))
 		return photoData
 	}
-
-
-	// if (yearmonthday === "0") {
-	// 	return {
-	// 		photoData: [{
-	// 			rowid: 999999,
-	// 			thisDate: "",
-	// 			title: '',
-	// 			photosNarrative: '',
-	// 			photosKeyword: '',
-	// 			photo: '',
-	// 			credits: '',
-	// 			datesNarrative: "",
-	// 			datesKeywords: ''
-	// 		}]
-	// 	}
-	// }
 })
 
 export const getPhoto = query(v.number(), async (id) => {
@@ -85,7 +67,7 @@ export const getPhoto = query(v.number(), async (id) => {
 				thisDate: "",
 				title: '',
 				photosNarrative: '',
-				photosKeyword: '',
+				photosKeywords: '',
 				photo: '',
 				credits: '',
 				datesNarrative: "",
@@ -98,8 +80,7 @@ export const getPhoto = query(v.number(), async (id) => {
 })
 
 export const search = command(
-	v.string()
-	,
+	v.string(),
 	async (searchText) => {
 		const res = await findPhotos(searchText)
 		return res

@@ -2,13 +2,12 @@
 	import { getYears } from '$lib/photos.remote';
 	import { getSelections } from '$lib/state.svelte';
 	import { ArrowDownWideNarrow, ArrowUpNarrowWide } from '@lucide/svelte';
-	import { PersistedState } from 'runed';
 
 	let { yearsData } = await getYears();
 
-	let ascDesc = new PersistedState('yearsort', 'desc');
+	let ascDesc = $state('desc');
 	let yearList = $derived(
-		ascDesc.current === 'asc'
+		ascDesc === 'asc'
 			? [...yearsData.toSorted((a, b) => Number(a.year) - Number(b.year))]
 			: [...yearsData.toSorted((b, a) => Number(a.year) - Number(b.year))]
 	);
@@ -17,9 +16,6 @@
 
 	let selectedYear = $derived(selections?.state.selectedYear ?? 0);
 	let yearPicker: HTMLSelectElement | undefined = $state();
-	// $effect(() => {
-	// 	yearPicker.value = selectedYear;
-	// });
 </script>
 
 <div class="wrap flex flex-wrap items-center gap-1 bg-sky-800 px-2 py-1 text-slate-100">
@@ -30,8 +26,6 @@
 		bind:this={yearPicker}
 		onchange={async () => {
 			selections.selectYear(yearPicker?.value ?? '0');
-			// selections.selectMonth('0');
-			// selections.selectDay(`D${yearPicker?.value}****`);
 		}}
 	>
 		<option value={0}>Choose a year</option>
@@ -42,15 +36,13 @@
 	<button
 		class="flex items-center gap-1"
 		onclick={() => {
-			if (ascDesc.current === 'asc') {
-				ascDesc.current = 'desc';
+			if (ascDesc === 'asc') {
+				ascDesc = 'desc';
 			} else {
-				ascDesc.current = 'asc';
+				ascDesc = 'asc';
 			}
 		}}
-		>{#if ascDesc.current === 'asc'}<ArrowUpNarrowWide /><span class="hidden sm:inline"
-				>Sort years</span
-			>
+		>{#if ascDesc === 'asc'}<ArrowUpNarrowWide /><span class="hidden sm:inline">Sort years</span>
 		{:else}
 			<ArrowDownWideNarrow /><span class="hidden sm:inline">Sort years</span>
 		{/if}

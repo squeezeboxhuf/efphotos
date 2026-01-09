@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { diarySearch, getDiary, getDiaryYear, listYears } from '$lib/diary.remote';
 	import { Search } from '@lucide/svelte';
-	import { IsInViewport } from 'runed';
 
 	let diaryData = await getDiary(0);
 	let yearsList = $derived(await listYears());
@@ -9,26 +8,9 @@
 	let data: { entryDate: string | null; content: string | null }[] = $derived(diaryData);
 
 	let progress = $state(1);
-	let targetNode = $state<HTMLElement>()!;
-	const inViewport = new IsInViewport(() => targetNode, {
-		once: true
-	});
-
-	// $effect(() => {
-	// 	data = [...diaryData.data];
-	// });
-	// if (inViewport.current) {
-	// 	console.log('bottom reached?');
-	// 	inViewport.observer.pause();
-	// 	const newData = getDiary(progress++).then((newData) => {
-	// 		data = [...data, ...newData.data];
-	// 		setTimeout(() => {
-	// 			inViewport.observer.resume();
-	// 		}, 5000);
-	// 	});
-	// }
 
 	let searchField: HTMLInputElement | undefined = $state();
+	let searchButton: HTMLButtonElement | undefined = $state();
 	let yearPicker: HTMLSelectElement | undefined = $state();
 	let headerTitle = $state("Eric's Diary");
 	async function getMore(progress: number) {
@@ -37,6 +19,13 @@
 	}
 </script>
 
+<svelte:window
+	on:keyup={(event) => {
+		if (event.key === 'Enter') {
+			searchButton?.click();
+		}
+	}}
+/>
 <article class="mx-auto text-slate-300">
 	<p class="mb-2 flex flex-wrap items-center gap-2 bg-sky-800 p-2">
 		<label for="year">Pick a year:</label>
@@ -61,6 +50,7 @@
 				class="mx-2 rounded border bg-white px-2 py-1 text-slate-800"
 			/>
 		</label><button
+			bind:this={searchButton}
 			type="submit"
 			onclick={async () => {
 				data = await diarySearch(searchField?.value ?? '');

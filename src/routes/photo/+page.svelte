@@ -1,27 +1,15 @@
 <script lang="ts">
 	import { getPhoto } from '$lib/photos.remote';
 	import { getSelections } from '$lib/state.svelte';
-	import { PersistedState } from 'runed';
 
 	let selections = getSelections();
-	let currentSelection = new PersistedState('currentSelection', selections.state);
-
-	// if (selections.state.rowId === 99999 && currentSelection.current.idTable.length !== 0) {
-	// 	selections.selectYear(currentSelection.current.selectedYear);
-	// 	selections.selectMonth(currentSelection.current.selectedMonth);
-	// 	selections.selectDay(currentSelection.current.selectedDay);
-	// 	selections.selectId(currentSelection.current.rowId);
-	// }
 
 	let photoResult = $derived(
 		await getPhoto(selections.state.idTable[selections.state.rowId] ?? 99999)
 	);
 	let photo = $derived(photoResult.photo);
 
-	// $effect(() => {
-	// 	getPhoto(selections.state.idTable[selections.state.rowId]).refresh();
-	// });
-	$inspect('photopage', currentSelection.current, selections.state, photoResult, photo);
+	// $inspect('photopage', selections.state, photoResult, photo);
 
 	let photoDate = $derived(
 		new Date(
@@ -34,23 +22,20 @@
 	function previous() {
 		if (selections.state.rowId > 0) {
 			selections.selectId(selections.state.rowId - 1);
-			// currentSelection.current.rowId = selections.state.rowId - 1;
 		}
 	}
 	function next() {
-		if (selections.state.rowId < selections.state.idTable.length) {
+		if (selections.state.rowId < selections.state.idTable.length - 1) {
 			selections.selectId(selections.state.rowId + 1);
-			// currentSelection.current.rowId = selections.state.rowId + 1;
 		}
 	}
 
 	$effect(() => {
 		getPhoto(selections.state.idTable[selections.state.rowId]).refresh();
-		// currentId.current = selections.state.rowId;
 	});
 </script>
 
-<article class="mx-4 flex w-full flex-col items-center">
+<article class="mx-0 flex w-full flex-col items-center sm:mx-2 lg:mx-4">
 	{#if photo?.rowid !== 99999}
 		<div class="flex w-full max-w-2xl flex-row justify-between">
 			<button onclick={previous}>Previous</button>
@@ -58,12 +43,15 @@
 			<button onclick={next}>Next</button>
 		</div>
 		<h1>{photoDate.toString().slice(0, 15)} : {photo.title}</h1>
-		<p>
-			<img
-				src={`/jpegs/${String(photo.thisDate).slice(0, 4)}/${String(photo.thisDate).slice(4, 6)}/${String(photo.thisDate).slice(-2)}/${photo.photo}`}
-				alt={photo.title}
-				class="max-h-screen max-w-screen rounded object-contain"
-			/>
+		<p class="relative">
+			<input type="checkbox" id="zoomer" class="hidden" />
+			<label for="zoomer">
+				<img
+					src={`http://mooserve:8037/${String(photo.thisDate).slice(0, 4)}/${String(photo.thisDate).slice(4, 6)}/${String(photo.thisDate).slice(-2)}/${photo.photo}`}
+					alt={photo.title}
+					class="photo relative max-h-screen max-w-screen cursor-zoom-in overflow-scroll scroll-auto rounded object-contain transition-all duration-300"
+				/>
+			</label>
 		</p>
 		<p>{photo.photosNarrative}</p>
 		<p>Keywords : {photo.photosKeywords} {photo.datesKeywords}</p>
@@ -71,3 +59,10 @@
 		<p>A big whoopsie...</p>
 	{/if}
 </article>
+
+<style>
+	input[type='checkbox']:checked ~ label > img {
+		scale: 2;
+		cursor: zoom-out;
+	}
+</style>

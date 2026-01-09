@@ -7,6 +7,6 @@ export default defineConfig({
   plugins: [tailwindcss(), sveltekit(), devtoolsJson()],
   server: {
     allowedHosts: true,
-    watch: { ignored: ["**/static/**"] },
+    watch: { ignored: ["**/jpegs/**"] },
   },
 });
